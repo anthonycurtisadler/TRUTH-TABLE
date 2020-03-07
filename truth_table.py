@@ -146,8 +146,9 @@ def split_into_phrases (phrase):
           # FOR EQUIVALENCY 
           premise = ''.join(phrase).split('<<#>>')[0]
           conclusion = ''.join(phrase).split('<<#>>')[1]
-          phrase1 = ['@','~'+premise,conclusion]
-          phrase2 = ['@','~'+conclusion,premise]
+     
+          phrase1 = '~'+'('+premise+'&'+'~'+conclusion+')'
+          phrase2 = '~'+'('+conclusion+'&'+'~'+premise+')'
           phrases = [phrase1,phrase2]
           # A<>B translated as (~A or B) & (~B or A) 
           
@@ -555,7 +556,13 @@ def format_input (phrase):
 print(ENTERSCRIPT)
 
 while True:
-    print(truth_table(input('?')))
+
+     try:
+
+          print(truth_table(input('?')))
+     except:
+          print('INVALID INPUT')
+
 
      
 
