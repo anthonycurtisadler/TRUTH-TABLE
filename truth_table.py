@@ -95,39 +95,36 @@ def split_into_phrases (phrase):
 
           #For a phrase without parantheses
           
-          if '&' in phrase:
-               return [x for x in phrase.split('&')]
+
           if '|' in phrase:
                return ['@']+[x for x in phrase.split('|')]
+          elif '&' in phrase:
+               return [x for x in phrase.split('&')]
 
      #If the phrase contains parantheses.
      
      phrase = list (phrase)
          #convert string into a list of chars
      level = 0
-     for x,char in enumerate(phrase):
-          if char == '(':
-               level += 1
-          if char == ')':
-               level -=1
-               # level indicates level within hierarchy established by parantheses
+     found = False # if one of the operators is found in the phrase 
 
-          if level == 0 and x+1 < len(phrase) and phrase[x+1] == '&':
-               phrase[x+1] = '<<&>>'
-                   # FOR AND
-               break
-          elif level == 0 and x+1 < len(phrase) and phrase[x+1] == '|':
-               phrase[x+1] = '<<|>>'
-                    # FOR OR 
-               break
-          elif level == 0 and x+1 < len(phrase) and phrase[x+1] == '>':
-               phrase[x+1] = '<<^>>'
-                    # FOR IMPLIES 
-               break
-          elif level == 0 and x+1 < len(phrase) and phrase[x+1] == '#':
-               phrase[x+1] = '<<#>>'
-                    # FOR EQUIVALENCY 
-               break
+     for operator in ['#','>','|','&']:
+          level = 0 # reset level
+          if not found:
+          
+          
+               for x,char in enumerate(phrase):
+                    if char == '(':
+                         level += 1
+                    if char == ')':
+                         level -=1
+                         # level indicates level within hierarchy established by parantheses
+
+                    if level == 0 and x+1 < len(phrase) and phrase[x+1] == operator:
+                         phrase[x+1] = '<<'+operator+'>>'
+                         found = True
+                         break
+                    
                
 
      if '<<&>>' in phrase:
@@ -136,10 +133,10 @@ def split_into_phrases (phrase):
      elif '<<|>>' in phrase:
           # For OR 
           phrases = ['@']+''.join(phrase).split('<<|>>')
-     elif '<<^>>' in phrase:
+     elif '<<>>>' in phrase:
           # For INFERENCE 
-          premise = ''.join(phrase).split('<<^>>')[0]
-          conclusion = ''.join(phrase).split('<<^>>')[1]
+          premise = ''.join(phrase).split('<<>>>')[0]
+          conclusion = ''.join(phrase).split('<<>>>')[1]
           phrases = ['@','~'+premise,conclusion]
           #  A => B  translated as ~A OR B
      elif '<<#>>' in phrase:
